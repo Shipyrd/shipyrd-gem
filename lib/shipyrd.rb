@@ -13,6 +13,7 @@ module Shipyrd
     headers = {'Content-Type': 'application/json'}
 
     details = {
+      deploy: {
         status: event,
         recorded_at: ENV['MRSK_RECORDED_AT'],
         performer: ENV['MRSK_PERFORMER'],
@@ -24,6 +25,7 @@ module Shipyrd
         role: ENV['MRSK_ROLE'],
         destination: ENV['MRSK_DESTINATION'],
         runtime: ENV['MRSK_RUNTIME']
+      }
     }
 
     http = Net::HTTP.new(uri.host, uri.port)

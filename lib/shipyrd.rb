@@ -30,6 +30,7 @@ module Shipyrd
 
     http = Net::HTTP.new(uri.host, uri.port)
     request = Net::HTTP::Post.new(uri.request_uri, headers)
+    request.basic_auth '', ENV['SHIPYRD_API_KEY']
     request.body = details.to_json
     response = http.request(request)
 

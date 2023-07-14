@@ -35,7 +35,7 @@ module Shipyrd
     response = http.request(request)
 
     if response.is_a?(Net::HTTPSuccess)
-      puts "Shipyrd: triggered #{event} successfully"
+      puts "Shipyrd: #{event} triggered successfully for #{details[:deploy][:service_version]}"
     else
       puts "Shipyrd: failed to trigger #{event}"
     end

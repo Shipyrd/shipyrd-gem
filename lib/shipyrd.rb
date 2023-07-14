@@ -19,6 +19,7 @@ module Shipyrd
         performer: ENV['MRSK_PERFORMER'],
         version: ENV['MRSK_VERSION'],
         service_version: ENV['MRSK_SERVICE_VERSION'],
+        service: ENV['MRSK_SERVICE_VERSION'].split('@').first,
         hosts: ENV['MRSK_HOSTS'],
         command: ENV['MRSK_COMMAND'],
         subcommand: ENV['MRSK_SUBCOMMAND'],

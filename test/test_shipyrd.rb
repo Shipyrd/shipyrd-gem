@@ -25,7 +25,7 @@ class TestShipyrd < Minitest::Test
 
       stub_request(
         :post,
-        "x:#{ENV["SHIPYRD_API_KEY"]}@#{ENV["SHIPYRD_HOST"]}/deploys.json"
+        "#{ENV["SHIPYRD_HOST"]}/deploys.json"
       ).with(
         body: {
           deploy: {
@@ -42,7 +42,10 @@ class TestShipyrd < Minitest::Test
             runtime: ENV["MRSK_RUNTIME"]
           }
         },
-        headers: {"Content-Type": "application/json"}
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer #{ENV["SHIPYRD_API_KEY"]}"
+        }
       )
 
       Shipyrd.trigger(event_name)

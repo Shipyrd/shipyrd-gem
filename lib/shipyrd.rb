@@ -10,7 +10,10 @@ module Shipyrd
 
   def self.trigger(event)
     uri = URI("#{ENV["SHIPYRD_HOST"]}/deploys.json")
-    headers = {"Content-Type": "application/json"}
+    headers = {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer #{ENV["SHIPYRD_API_KEY"]}"
+    }
 
     details = {
       deploy: {
@@ -30,7 +33,6 @@ module Shipyrd
 
     http = Net::HTTP.new(uri.host, uri.port)
     request = Net::HTTP::Post.new(uri.request_uri, headers)
-    request.basic_auth "", ENV["SHIPYRD_API_KEY"]
     request.body = details.to_json
     response = http.request(request)
 

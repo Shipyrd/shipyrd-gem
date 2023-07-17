@@ -9,6 +9,9 @@ module Shipyrd
   class Error < StandardError; end
 
   def self.trigger(event)
+    raise "ENV['SHIPYRD_HOST'] is not configured, skipping trigger" unless ENV["SHIPYRD_HOST"]
+    raise "ENV['SHIPYRD_API_KEY'] is not configured, skipping trigger" unless ENV["SHIPYRD_API_KEY"]
+
     uri = URI("#{ENV["SHIPYRD_HOST"]}/deploys.json")
     headers = {
       "Content-Type": "application/json",
@@ -37,9 +40,15 @@ module Shipyrd
     response = http.request(request)
 
     if response.is_a?(Net::HTTPSuccess)
-      puts "Shipyrd: #{event} triggered successfully for #{details[:deploy][:service_version]}"
+      log "#{event} triggered successfully for #{details[:deploy][:service_version]}"
     else
-      puts "Shipyrd: #{event} trigger failed for #{details[:deploy][:service_version]}"
+      log "#{event} trigger failed for #{details[:deploy][:service_version]}"
     end
+  rescue => e
+    log "#{event} trigger failed with error => #{e}"
+  end
+
+  def self.log(message)
+    puts "Shipyrd: #{message}"
   end
 end

@@ -4,9 +4,7 @@ require "test_helper"
 
 class TestShipyrd < Minitest::Test
   describe "#trigger" do
-    it "successfully records a deploy in shipyrd" do
-      event_name = "deploy-event"
-
+    before do
       # shipyrd config
       ENV["SHIPYRD_HOST"] = "http://localhost"
       ENV["SHIPYRD_API_KEY"] = "secret"
@@ -22,6 +20,23 @@ class TestShipyrd < Minitest::Test
       ENV["MRSK_ROLE"] = "web"
       ENV["MRSK_DESTINATION"] = "production"
       ENV["MRSK_RUNTIME"] = "125"
+    end
+
+    describe "failing from configuration" do
+      it "when host isn't configured" do
+        ENV["SHIPYRD_HOST"] = nil
+        Shipyrd.trigger("deploy")
+      end
+
+      it "when api key isn't configured" do
+        ENV["SHIPYRD_API_KEY"] = nil
+        assert_not_requested(:post, ENV["SHIPYRD_HOST"])
+        Shipyrd.trigger("deploy")
+      end
+    end
+
+    it "successfully records a deploy in shipyrd" do
+      event_name = "deploy-event"
 
       stub_request(
         :post,

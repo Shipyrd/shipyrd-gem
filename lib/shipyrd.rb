@@ -12,6 +12,8 @@ module Shipyrd
     raise "ENV['SHIPYRD_HOST'] is not configured, skipping trigger" unless ENV["SHIPYRD_HOST"]
     raise "ENV['SHIPYRD_API_KEY'] is not configured, skipping trigger" unless ENV["SHIPYRD_API_KEY"]
 
+    log "Triggering #{event} to #{ENV["SHIPYRD_HOST"]}"
+
     uri = URI("#{ENV["SHIPYRD_HOST"]}/deploys.json")
     headers = {
       "Content-Type": "application/json",
@@ -21,20 +23,21 @@ module Shipyrd
     details = {
       deploy: {
         status: event,
-        recorded_at: ENV["MRSK_RECORDED_AT"],
-        performer: ENV["MRSK_PERFORMER"],
-        version: ENV["MRSK_VERSION"],
-        service_version: ENV["MRSK_SERVICE_VERSION"],
-        hosts: ENV["MRSK_HOSTS"],
-        command: ENV["MRSK_COMMAND"],
-        subcommand: ENV["MRSK_SUBCOMMAND"],
-        role: ENV["MRSK_ROLE"],
-        destination: ENV["MRSK_DESTINATION"],
-        runtime: ENV["MRSK_RUNTIME"]
+        recorded_at: ENV["KAMAL_RECORDED_AT"],
+        performer: ENV["KAMAL_PERFORMER"],
+        version: ENV["KAMAL_VERSION"],
+        service_version: ENV["KAMAL_SERVICE_VERSION"],
+        hosts: ENV["KAMAL_HOSTS"],
+        command: ENV["KAMAL_COMMAND"],
+        subcommand: ENV["KAMAL_SUBCOMMAND"],
+        role: ENV["KAMAL_ROLE"],
+        destination: ENV["KAMAL_DESTINATION"],
+        runtime: ENV["KAMAL_RUNTIME"]
       }
     }
 
     http = Net::HTTP.new(uri.host, uri.port)
+    http.use_ssl = true
     request = Net::HTTP::Post.new(uri.request_uri, headers)
     request.body = details.to_json
     response = http.request(request)
@@ -42,7 +45,7 @@ module Shipyrd
     if response.is_a?(Net::HTTPSuccess)
       log "#{event} triggered successfully for #{details[:deploy][:service_version]}"
     else
-      log "#{event} trigger failed for #{details[:deploy][:service_version]}"
+      log "#{event} trigger failed for #{details[:deploy][:service_version]} with #{response.code} #{response.message}"
     end
   rescue => e
     log "#{event} trigger failed with error => #{e}"

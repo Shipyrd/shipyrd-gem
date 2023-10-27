@@ -8,8 +8,8 @@ Gem::Specification.new do |spec|
   spec.authors = ["Nick Hammond"]
   spec.email = ["nick@nickhammond.com"]
 
-  spec.summary = "The companion gem for Shipyrd, the MRSK deployment dashboard"
-  spec.description = "The companion gem for Shipyrd, the MRSK deployment dashboard"
+  spec.summary = "The companion gem for Shipyrd, the Kamal deployment dashboard"
+  spec.description = "The companion gem for Shipyrd, the Kamal deployment dashboard"
   spec.homepage = "https://shipyrd.io"
   spec.required_ruby_version = ">= 2.6.0"
 

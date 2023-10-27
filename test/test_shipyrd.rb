@@ -9,17 +9,17 @@ class TestShipyrd < Minitest::Test
       ENV["SHIPYRD_HOST"] = "http://localhost"
       ENV["SHIPYRD_API_KEY"] = "secret"
 
-      # mrsk env
-      ENV["MRSK_RECORDED_AT"] = Time.now.to_s
-      ENV["MRSK_PERFORMER"] = "n"
-      ENV["MRSK_VERSION"] = "4152f876f56384f268fbdaa7a30dd2e5f5ee3894"
-      ENV["MRSK_SERVICE_VERSION"] = "example@#{ENV["MRSK_VERSION"][0..6]}"
-      ENV["MRSK_HOSTS"] = "867.530.9"
-      ENV["MRSK_COMMAND"] = "deploy"
-      ENV["MRSK_SUBCOMMAND"] = "thingz"
-      ENV["MRSK_ROLE"] = "web"
-      ENV["MRSK_DESTINATION"] = "production"
-      ENV["MRSK_RUNTIME"] = "125"
+      # Kamal env
+      ENV["KAMAL_RECORDED_AT"] = Time.now.to_s
+      ENV["KAMAL_PERFORMER"] = "n"
+      ENV["KAMAL_VERSION"] = "4152f876f56384f268fbdaa7a30dd2e5f5ee3894"
+      ENV["KAMAL_SERVICE_VERSION"] = "example@#{ENV["KAMAL_VERSION"][0..6]}"
+      ENV["KAMAL_HOSTS"] = "867.530.9"
+      ENV["KAMAL_COMMAND"] = "deploy"
+      ENV["KAMAL_SUBCOMMAND"] = "thingz"
+      ENV["KAMAL_ROLE"] = "web"
+      ENV["KAMAL_DESTINATION"] = "production"
+      ENV["KAMAL_RUNTIME"] = "125"
     end
 
     describe "failing from configuration" do
@@ -45,16 +45,16 @@ class TestShipyrd < Minitest::Test
         body: {
           deploy: {
             status: event_name,
-            recorded_at: ENV["MRSK_RECORDED_AT"],
-            performer: ENV["MRSK_PERFORMER"],
-            version: ENV["MRSK_VERSION"],
-            service_version: ENV["MRSK_SERVICE_VERSION"],
-            hosts: ENV["MRSK_HOSTS"],
-            command: ENV["MRSK_COMMAND"],
-            subcommand: ENV["MRSK_SUBCOMMAND"],
-            role: ENV["MRSK_ROLE"],
-            destination: ENV["MRSK_DESTINATION"],
-            runtime: ENV["MRSK_RUNTIME"]
+            recorded_at: ENV["KAMAL_RECORDED_AT"],
+            performer: ENV["KAMAL_PERFORMER"],
+            version: ENV["KAMAL_VERSION"],
+            service_version: ENV["KAMAL_SERVICE_VERSION"],
+            hosts: ENV["KAMAL_HOSTS"],
+            command: ENV["KAMAL_COMMAND"],
+            subcommand: ENV["KAMAL_SUBCOMMAND"],
+            role: ENV["KAMAL_ROLE"],
+            destination: ENV["KAMAL_DESTINATION"],
+            runtime: ENV["KAMAL_RUNTIME"]
           }
         },
         headers: {

@@ -28,9 +28,10 @@ Gem::Specification.new do |spec|
   spec.executables = spec.files.grep(%r{\Aexe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
 
-  spec.add_development_dependency "minitest"
-  spec.add_development_dependency "guard"
-  spec.add_development_dependency "guard-minitest"
-  spec.add_development_dependency "guard-standardrb"
-  spec.add_development_dependency "webmock"
+  spec.add_development_dependency "minitest", "~> 5.20"
+  spec.add_development_dependency "minitest-reporters", "~> 1.3"
+  spec.add_development_dependency "guard", "~> 2.18"
+  spec.add_development_dependency "guard-minitest", "~> 2.4"
+  spec.add_development_dependency "guard-standardrb", "~> 0.2"
+  spec.add_development_dependency "webmock", "~> 3.19"
 end

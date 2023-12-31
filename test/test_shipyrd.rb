@@ -6,7 +6,7 @@ class TestShipyrd < Minitest::Test
   describe "#trigger" do
     before do
       # shipyrd config
-      ENV["SHIPYRD_HOST"] = "http://localhost"
+      ENV["SHIPYRD_HOST"] = "https://localhost"
       ENV["SHIPYRD_API_KEY"] = "secret"
 
       # Kamal env

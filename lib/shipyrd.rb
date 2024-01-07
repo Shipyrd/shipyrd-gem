@@ -8,16 +8,28 @@ require "json"
 module Shipyrd
   class Error < StandardError; end
 
+  class ConfigurationError < Error; end
+
+  ENV_VARS = %w[
+    KAMAL_COMMAND
+    KAMAL_DESTINATION
+    KAMAL_HOSTS
+    KAMAL_PERFORMER
+    KAMAL_RECORDED_AT
+    KAMAL_ROLE
+    KAMAL_RUNTIME
+    KAMAL_SERVICE_VERSION
+    KAMAL_SUBCOMMAND
+    KAMAL_VERSION
+    SHIPYRD_API_KEY
+    SHIPYRD_HOST
+  ]
+
   def self.trigger(event)
-    raise "ENV['SHIPYRD_HOST'] is not configured, skipping trigger" unless ENV["SHIPYRD_HOST"]
-    raise "ENV['SHIPYRD_API_KEY'] is not configured, skipping trigger" unless ENV["SHIPYRD_API_KEY"]
-
-    log "Triggering #{event} to #{ENV["SHIPYRD_HOST"]}"
-
-    uri = URI("#{ENV["SHIPYRD_HOST"]}/deploys.json")
+    uri = URI("#{host}/deploys.json")
     headers = {
       "Content-Type": "application/json",
-      "Authorization": "Bearer #{ENV["SHIPYRD_API_KEY"]}"
+      "Authorization": "Bearer #{api_key}"
     }
 
     details = {
@@ -40,15 +52,32 @@ module Shipyrd
     http.use_ssl = true
     request = Net::HTTP::Post.new(uri.request_uri, headers)
     request.body = details.to_json
+
     response = http.request(request)
 
     if response.is_a?(Net::HTTPSuccess)
       log "#{event} triggered successfully for #{details[:deploy][:service_version]}"
     else
-      log "#{event} trigger failed for #{details[:deploy][:service_version]} with #{response.code} #{response.message}"
+      log "#{event} trigger failed with #{response.code}(#{response.message})"
     end
   rescue => e
     log "#{event} trigger failed with error => #{e}"
+  end
+
+  def self.env
+    ENV.slice(*ENV_VARS)
+  end
+
+  def self.host
+    raise ConfigurationError.new("ENV['SHIPYRD_HOST'] is not configured") unless env["SHIPYRD_HOST"]
+
+    env["SHIPYRD_HOST"]
+  end
+
+  def self.api_key
+    raise ConfigurationError.new("ENV['SHIPYRD_API_KEY'] is not configured") unless env["SHIPYRD_API_KEY"]
+
+    env["SHIPYRD_API_KEY"]
   end
 
   def self.log(message)

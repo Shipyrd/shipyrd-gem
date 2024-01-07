@@ -4,66 +4,95 @@ require "test_helper"
 
 class TestShipyrd < Minitest::Test
   describe "#trigger" do
-    before do
-      # shipyrd config
-      ENV["SHIPYRD_HOST"] = "https://localhost"
-      ENV["SHIPYRD_API_KEY"] = "secret"
-
-      # Kamal env
-      ENV["KAMAL_RECORDED_AT"] = Time.now.to_s
-      ENV["KAMAL_PERFORMER"] = "n"
-      ENV["KAMAL_VERSION"] = "4152f876f56384f268fbdaa7a30dd2e5f5ee3894"
-      ENV["KAMAL_SERVICE_VERSION"] = "example@#{ENV["KAMAL_VERSION"][0..6]}"
-      ENV["KAMAL_HOSTS"] = "867.530.9"
-      ENV["KAMAL_COMMAND"] = "deploy"
-      ENV["KAMAL_SUBCOMMAND"] = "thingz"
-      ENV["KAMAL_ROLE"] = "web"
-      ENV["KAMAL_DESTINATION"] = "production"
-      ENV["KAMAL_RUNTIME"] = "125"
+    after do
+      Shipyrd::ENV_VARS.each do |var|
+        ENV.delete(var)
+      end
     end
 
-    describe "failing from configuration" do
+    describe "configuration" do
       it "when host isn't configured" do
         ENV["SHIPYRD_HOST"] = nil
-        Shipyrd.trigger("deploy")
+
+        assert_output "Shipyrd: deploy trigger failed with error => ENV['SHIPYRD_HOST'] is not configured\n" do
+          Shipyrd.trigger("deploy")
+        end
       end
 
-      it "when api key isn't configured" do
+      it "when API key isn't configured" do
         ENV["SHIPYRD_API_KEY"] = nil
-        assert_not_requested(:post, ENV["SHIPYRD_HOST"])
-        Shipyrd.trigger("deploy")
+        ENV["SHIPYRD_HOST"] = "https://localhost"
+
+        assert_output "Shipyrd: deploy trigger failed with error => ENV['SHIPYRD_API_KEY'] is not configured\n" do
+          Shipyrd.trigger("deploy")
+        end
       end
     end
 
-    it "successfully records a deploy in shipyrd" do
-      event_name = "deploy-event"
+    describe "triggering" do
+      it "fails gracefully from failed network request" do
+        ENV["SHIPYRD_HOST"] = "https://localhost"
+        ENV["SHIPYRD_API_KEY"] = "secret"
+        ENV["KAMAL_SERVICE_VERSION"] = "example@4152f8"
 
-      stub_request(
-        :post,
-        "#{ENV["SHIPYRD_HOST"]}/deploys.json"
-      ).with(
-        body: {
-          deploy: {
-            status: event_name,
-            recorded_at: ENV["KAMAL_RECORDED_AT"],
-            performer: ENV["KAMAL_PERFORMER"],
-            version: ENV["KAMAL_VERSION"],
-            service_version: ENV["KAMAL_SERVICE_VERSION"],
-            hosts: ENV["KAMAL_HOSTS"],
-            command: ENV["KAMAL_COMMAND"],
-            subcommand: ENV["KAMAL_SUBCOMMAND"],
-            role: ENV["KAMAL_ROLE"],
-            destination: ENV["KAMAL_DESTINATION"],
-            runtime: ENV["KAMAL_RUNTIME"]
+        stub_request(
+          :post,
+          "#{Shipyrd.host}/deploys.json"
+        ).to_return(
+          status: [500, "Application Error"]
+        )
+
+        assert_output "Shipyrd: deploy trigger failed with 500(Application Error)\n" do
+          Shipyrd.trigger("deploy")
+        end
+      end
+
+      it "successfully records a deploy in shipyrd" do
+        ENV["SHIPYRD_HOST"] = "https://localhost"
+        ENV["SHIPYRD_API_KEY"] = "secret"
+        ENV["KAMAL_RECORDED_AT"] = Time.now.to_s
+        ENV["KAMAL_PERFORMER"] = "n"
+        ENV["KAMAL_VERSION"] = "4152f876f56384f268fbdaa7a30dd2e5f5ee3894"
+        ENV["KAMAL_SERVICE_VERSION"] = "example@4152f8"
+        ENV["KAMAL_HOSTS"] = "867.530.9"
+        ENV["KAMAL_COMMAND"] = "deploy"
+        ENV["KAMAL_SUBCOMMAND"] = "thingz"
+        ENV["KAMAL_ROLE"] = "web"
+        ENV["KAMAL_DESTINATION"] = "production"
+        ENV["KAMAL_RUNTIME"] = "125"
+
+        event = "deploy-event"
+        env = Shipyrd.env
+
+        stub_request(
+          :post,
+          "#{Shipyrd.host}/deploys.json"
+        ).with(
+          body: {
+            deploy: {
+              status: event,
+              recorded_at: env["KAMAL_RECORDED_AT"],
+              performer: env["KAMAL_PERFORMER"],
+              version: env["KAMAL_VERSION"],
+              service_version: env["KAMAL_SERVICE_VERSION"],
+              hosts: env["KAMAL_HOSTS"],
+              command: env["KAMAL_COMMAND"],
+              subcommand: env["KAMAL_SUBCOMMAND"],
+              role: env["KAMAL_ROLE"],
+              destination: env["KAMAL_DESTINATION"],
+              runtime: env["KAMAL_RUNTIME"]
+            }
+          }.to_json,
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer #{Shipyrd.api_key}"
           }
-        },
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer #{ENV["SHIPYRD_API_KEY"]}"
-        }
-      )
+        )
 
-      Shipyrd.trigger(event_name)
+        assert_output "Shipyrd: deploy-event triggered successfully for example@4152f8\n" do
+          Shipyrd.trigger(event)
+        end
+      end
     end
   end
 end

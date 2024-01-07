@@ -20,7 +20,7 @@
 #   watch(/.+\.rb$/)
 # end
 
-guard :standardrb, fix: true, all_on_start: false, progress: true do
+guard :standardrb, fix: false, all_on_start: false, progress: true do
   watch(/.+\.rb$/)
 end
 

@@ -24,8 +24,7 @@ Gem::Specification.new do |spec|
       (File.expand_path(f) == __FILE__) || f.start_with?(*%w[bin/ test/ spec/ features/ .git .circleci appveyor])
     end
   end
-  spec.bindir = "exe"
-  spec.executables = spec.files.grep(%r{\Aexe/}) { |f| File.basename(f) }
+  spec.bindir = "bin"
   spec.require_paths = ["lib"]
 
   spec.add_development_dependency "rake", "~> 13.0"
@@ -35,5 +34,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "mocha", "~> 2.1.0"
   spec.add_development_dependency "guard-minitest", "~> 2.4"
   spec.add_development_dependency "guard-standardrb", "~> 0.2"
-  spec.add_development_dependency "webmock", "~> 3.19"
+  spec.add_development_dependency "webmock", "~> 3.23"
 end

@@ -1,4 +1,2 @@
 release:
   tag: true
-  github: true
-  repo: shipyrd/shipyrd-gem

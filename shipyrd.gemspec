@@ -27,6 +27,7 @@ Gem::Specification.new do |spec|
   spec.bindir = "bin"
   spec.require_paths = ["lib"]
 
+  spec.add_development_dependency "gem-release", "~> 2.2"
   spec.add_development_dependency "rake", "~> 13.0"
   spec.add_development_dependency "minitest", "~> 5.20"
   spec.add_development_dependency "minitest-reporters", "~> 1.3"

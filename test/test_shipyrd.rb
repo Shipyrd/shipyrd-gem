@@ -27,6 +27,16 @@ class TestShipyrd < Minitest::Test
           Shipyrd.trigger("deploy")
         end
       end
+
+      it "sets the performer" do
+        ENV["KAMAL_PERFORMER"] = "n"
+
+        Shipyrd.stubs(:`).with("gh config get -h github.com username").returns("")
+        assert_equal ENV["KAMAL_PERFORMER"], Shipyrd.performer
+
+        Shipyrd.stubs(:`).with("gh config get -h github.com username").returns("nickhammond")
+        assert_equal "https://github.com/nickhammond", Shipyrd.performer
+      end
     end
 
     describe "triggering" do
@@ -48,10 +58,11 @@ class TestShipyrd < Minitest::Test
       end
 
       it "successfully records a deploy in shipyrd" do
+        Shipyrd.stubs(:performer).returns("nick")
+
         ENV["SHIPYRD_HOST"] = "https://localhost"
         ENV["SHIPYRD_API_KEY"] = "secret"
         ENV["KAMAL_RECORDED_AT"] = Time.now.to_s
-        ENV["KAMAL_PERFORMER"] = "n"
         ENV["KAMAL_VERSION"] = "4152f876f56384f268fbdaa7a30dd2e5f5ee3894"
         ENV["KAMAL_SERVICE_VERSION"] = "example@4152f8"
         ENV["KAMAL_HOSTS"] = "867.530.9"
@@ -72,7 +83,7 @@ class TestShipyrd < Minitest::Test
             deploy: {
               status: event,
               recorded_at: env["KAMAL_RECORDED_AT"],
-              performer: env["KAMAL_PERFORMER"],
+              performer: Shipyrd.performer,
               version: env["KAMAL_VERSION"],
               service_version: env["KAMAL_SERVICE_VERSION"],
               hosts: env["KAMAL_HOSTS"],

@@ -36,7 +36,7 @@ module Shipyrd
       deploy: {
         status: event,
         recorded_at: ENV["KAMAL_RECORDED_AT"],
-        performer: ENV["KAMAL_PERFORMER"],
+        performer: performer,
         version: ENV["KAMAL_VERSION"],
         service_version: ENV["KAMAL_SERVICE_VERSION"],
         hosts: ENV["KAMAL_HOSTS"],
@@ -66,6 +66,12 @@ module Shipyrd
 
   def self.env
     ENV.slice(*ENV_VARS)
+  end
+
+  def self.performer
+    github_username = `gh config get -h github.com username`.chomp
+
+    github_username.empty? ? ENV["KAMAL_PERFORMER"] : "https://github.com/#{github_username}"
   end
 
   def self.host

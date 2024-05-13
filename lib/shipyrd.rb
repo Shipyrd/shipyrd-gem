@@ -37,6 +37,7 @@ module Shipyrd
         status: event,
         recorded_at: ENV["KAMAL_RECORDED_AT"],
         performer: performer,
+        commit_message: commit_message,
         version: ENV["KAMAL_VERSION"],
         service_version: ENV["KAMAL_SERVICE_VERSION"],
         hosts: ENV["KAMAL_HOSTS"],
@@ -72,6 +73,16 @@ module Shipyrd
     github_username = `gh config get -h github.com username`.chomp
 
     github_username.empty? ? ENV["KAMAL_PERFORMER"] : "https://github.com/#{github_username}"
+  end
+
+  def self.commit_message
+    message = `git show -s --format=%s`.chomp
+
+    if message.length >= 90
+      "#{message[0..90]}..."
+    else
+      message
+    end
   end
 
   def self.host

@@ -37,6 +37,12 @@ class TestShipyrd < Minitest::Test
         Shipyrd.stubs(:`).with("gh config get -h github.com username").returns("nickhammond")
         assert_equal "https://github.com/nickhammond", Shipyrd.performer
       end
+
+      it "sets the commit message to the first 50 characters from git logs" do
+        Shipyrd.stubs(:`).with("git show -s --format=%s").returns("This is a commit message for some new fancy stuff that is longer than 90 characters and should get cut off")
+
+        assert_equal "This is a commit message for some new fancy stuff that is longer than 90 characters and sho...", Shipyrd.commit_message
+      end
     end
 
     describe "triggering" do
@@ -59,6 +65,7 @@ class TestShipyrd < Minitest::Test
 
       it "successfully records a deploy in shipyrd" do
         Shipyrd.stubs(:performer).returns("nick")
+        Shipyrd.stubs(:commit_message).returns("This is a commit message")
 
         ENV["SHIPYRD_HOST"] = "https://localhost"
         ENV["SHIPYRD_API_KEY"] = "secret"
@@ -84,6 +91,7 @@ class TestShipyrd < Minitest::Test
               status: event,
               recorded_at: env["KAMAL_RECORDED_AT"],
               performer: Shipyrd.performer,
+              commit_message: Shipyrd.commit_message,
               version: env["KAMAL_VERSION"],
               service_version: env["KAMAL_SERVICE_VERSION"],
               hosts: env["KAMAL_HOSTS"],

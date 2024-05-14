@@ -50,6 +50,9 @@ module Shipyrd
     }
 
     http = Net::HTTP.new(uri.host, uri.port)
+    http.read_timeout = 5
+    http.write_timeout = 5
+    http.open_timeout = 5
     http.use_ssl = true
     request = Net::HTTP::Post.new(uri.request_uri, headers)
     request.body = details.to_json

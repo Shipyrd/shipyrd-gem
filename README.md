@@ -18,6 +18,24 @@ If bundler is not being used to manage dependencies, install the gem by executin
 
 Please see the main Shipyrd app([https://github.com/shipyrd/shipyrd](https://github.com/shipyrd/shipyrd)) for setup and usage instructions.
 
+## Recording a deploy
+
+This gem currently sends the following deploy details to record a deploy. The various `KAMAL_` ENV variables are set via Kamal when the [hooks are called](https://kamal-deploy.org/docs/hooks/hooks-overview/).
+
+* `ENV["KAMAL_COMMAND"]`,
+* `ENV["KAMAL_DESTINATION"]`,
+* `ENV["KAMAL_HOSTS"`,
+* `ENV["KAMAL_PERFORMER"]` - `gh config get -h github.com username` is preferred if set.
+* `ENV["KAMAL_RECORDED_AT"]`,
+* `ENV["KAMAL_ROLE"]`,
+* `ENV["KAMAL_RUNTIME"]`,
+* `ENV["KAMAL_SERVICE_VERSION"]`,
+* `ENV["KAMAL_SUBCOMMAND"]`,
+* `ENV["KAMAL_VERSION"]`,
+* `ENV["SHIPYRD_API_KEY"]`,
+* `ENV["SHIPYRD_HOST"]`,
+* Commit message - The first 90 characters of your commit message `git show -s --format=%s`.
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `bin/test` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.

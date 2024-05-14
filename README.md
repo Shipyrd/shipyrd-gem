@@ -2,7 +2,7 @@
 
 This is a simple helper gem to connect your Kamal hooks(pre-build, pre-build, pre-deploy, post-deploy) to Shipyrd.
 
-Shipyrd is a deployment dashboard built for Kamal.
+[Shipyrd](https://shipyrd.io) is a deployment dashboard built for Kamal.
 
 ## Installation
 

@@ -36,7 +36,7 @@ class Shipyrd::Client
       deploy: {
         status: event,
         recorded_at: ENV["KAMAL_RECORDED_AT"],
-        performer:,
+        performer: performer,
         commit_message:,
         version: ENV["KAMAL_VERSION"],
         service_version: ENV["KAMAL_SERVICE_VERSION"],

@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+ENV["CI"] = "true" # To silence stdout with minitest-silence
+
 $LOAD_PATH.unshift File.expand_path("../lib", __dir__)
 require "shipyrd"
 

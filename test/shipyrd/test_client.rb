@@ -44,6 +44,11 @@ class TestShipyrdClient < Minitest::Test
         assert_equal "https://localhost", Shipyrd::Client.new.host
       end
 
+      it "https protocol is not added to host if it's already there" do
+        ENV["SHIPYRD_HOST"] = "https://localhost"
+        assert_equal "https://localhost", Shipyrd::Client.new.host
+      end
+
       it "when API key isn't configured" do
         ENV["SHIPYRD_API_KEY"] = nil
         ENV["SHIPYRD_HOST"] = "localhost"

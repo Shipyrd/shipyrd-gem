@@ -116,6 +116,7 @@ class Shipyrd::Client
 
   def parse_host(host)
     return nil unless host
+    return host if host.start_with?("https")
 
     "https://#{host}"
   end

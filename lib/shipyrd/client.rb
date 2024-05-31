@@ -73,9 +73,13 @@ class Shipyrd::Client
   end
 
   def performer
-    github_username = `gh config get -h github.com username`.chomp
-
     github_username.empty? ? ENV["KAMAL_PERFORMER"] : "https://github.com/#{github_username}"
+  end
+
+  def github_username
+    `gh config get -h github.com username`.chomp
+  rescue
+    "" # gh config get returns an empty string when not set
   end
 
   def commit_message

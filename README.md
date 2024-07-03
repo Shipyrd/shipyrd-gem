@@ -18,6 +18,24 @@ If bundler is not being used to manage dependencies, install the gem by executin
 
 Please see the main Shipyrd app([https://github.com/shipyrd/shipyrd](https://github.com/shipyrd/shipyrd)) for setup and usage instructions.
 
+## Usage with Docker
+
+You can run a dockerized version of `shipyrd-gem` by adding the following function to your `~/.bashrc` or similar:
+
+```bash
+shipyrd() {
+  docker run --rm -v "${PWD}:/workdir" --env-file <(env | grep -E '^(KAMAL_|SHIPYRD_)') ghcr.io/shipyrd/shipyrd-gem /shipyrd/bin/"$@"
+}
+```
+
+Then within a specific Kamal hook (e.g. `pre-connect`), you can call `shipyrd` like this:
+
+```bash
+#!/usr/bin/env bash
+
+shipyrd pre-connect
+```
+
 ## Recording a deploy
 
 This gem currently sends the following deploy details to record a deploy. The various `KAMAL_` ENV variables are set via Kamal when the [hooks are called](https://kamal-deploy.org/docs/hooks/hooks-overview/).

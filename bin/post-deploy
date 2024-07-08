@@ -1,0 +1,5 @@
+#!/usr/bin/env ruby
+
+require 'shipyrd'
+
+Shipyrd::Client.new.trigger('post-deploy')

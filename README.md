@@ -64,6 +64,14 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 Bug reports and pull requests are welcome on GitHub at https://github.com/shipyrd/shipyrd-gem. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [code of conduct](https://github.com/[shipyrd/shipyrd-gem/blob/main/CODE_OF_CONDUCT.md).
 
+## Releasing a new version
+
+The `bin/release` command will bump the version in the version.rb file, tag it, and push it up to github & rubygems.
+
+```
+bin/release 0.2.8
+```
+
 ## Code of Conduct
 
 Everyone interacting in the Shipyrd project's codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/shipyrd/shipyrd-gem/blob/main/CODE_OF_CONDUCT.md).

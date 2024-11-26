@@ -14,9 +14,7 @@ class TestShipyrdClient < Minitest::Test
       it "when host isn't configured" do
         ENV["SHIPYRD_HOST"] = nil
 
-        Shipyrd::Logger.any_instance.expects(:info).with("ENV['SHIPYRD_HOST'] is not configured, disabling")
-
-        Shipyrd::Client.new
+        assert_equal Shipyrd::Client.new.host, "https://hooks.shipyrd.io"
       end
 
       it "host and api key can be passed in as arguments" do

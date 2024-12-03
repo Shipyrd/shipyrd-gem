@@ -93,19 +93,13 @@ class Shipyrd::Client
   end
 
   def validate_configuration
-    valid_host? && valid_api_key?
+    valid_api_key?
 
     true
   rescue ArgumentError => e
     logger.info(e.to_s)
 
     false
-  end
-
-  def valid_host?
-    raise ArgumentError, "ENV['SHIPYRD_HOST'] is not configured, disabling" unless host
-
-    true
   end
 
   def valid_api_key?
@@ -115,7 +109,7 @@ class Shipyrd::Client
   end
 
   def parse_host(host)
-    return nil unless host
+    return "https://hooks.shipyrd.io" if host.nil?
     return host if host.start_with?("https")
 
     "https://#{host}"

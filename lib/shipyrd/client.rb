@@ -64,7 +64,7 @@ class Shipyrd::Client
     if response.is_a?(Net::HTTPSuccess)
       logger.info "#{event} triggered successfully for #{details[:deploy][:service_version]}"
     elsif response.is_a?(Net::HTTPUnprocessableEntity)
-      json_response = JSON.parse(response.message)
+      json_response = JSON.parse(response.body)
 
       if (lock = json_response.dig("errors", "lock"))
         raise DestinationBlocked, lock

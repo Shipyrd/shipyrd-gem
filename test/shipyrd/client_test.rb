@@ -108,7 +108,8 @@ class TestShipyrdClient < Minitest::Test
           :post,
           "#{client.host}/deploys.json"
         ).to_return(
-          status: [422, {errors: {"lock": "Destination locked by user"}}.to_json]
+          status: [422, "Unprocessable content"],
+          body: {errors: {"lock": "Destination locked by user"}}.to_json
         )
 
         assert_raises(Shipyrd::Client::DestinationBlocked, "pre-deploy trigger failed with 'Destination locked by user'") do

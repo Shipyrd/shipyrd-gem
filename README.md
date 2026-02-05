@@ -69,7 +69,7 @@ Bug reports and pull requests are welcome on GitHub at https://github.com/shipyr
 The `bin/release` command will bump the version in the version.rb file, tag it, and push it up to github & rubygems.
 
 ```
-bin/release 0.2.8
+bin/release 0.2.11
 ```
 
 ## Code of Conduct

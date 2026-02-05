@@ -74,7 +74,7 @@ class Shipyrd::Client
     else
       logger.info "#{event} trigger failed with #{response.code}(#{response.message})"
     end
-  rescue DestinationBlocked => e
+  rescue DestinationBlocked
     raise
   rescue => e
     logger.info "#{event} trigger failed with error => #{e}"

@@ -66,7 +66,7 @@ class Shipyrd::Client
     elsif response.is_a?(Net::HTTPUnprocessableEntity)
       json_response = JSON.parse(response.message)
 
-      if lock = json_response.dig("errors", "lock")
+      if (lock = json_response.dig("errors", "lock"))
         raise DestinationBlocked, lock
       else
         logger.info "#{event} trigger failed with errors => #{json_response["errors"]}"

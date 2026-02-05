@@ -97,6 +97,25 @@ class TestShipyrdClient < Minitest::Test
         client.trigger("deploy")
       end
 
+      it "raises when destination is blocked" do
+        ENV["SHIPYRD_HOST"] = "localhost"
+        ENV["SHIPYRD_API_KEY"] = "secret"
+        ENV["KAMAL_SERVICE_VERSION"] = "example@4152f8"
+
+        client = Shipyrd::Client.new
+
+        stub_request(
+          :post,
+          "#{client.host}/deploys.json"
+        ).to_return(
+          status: [422, {errors: {"lock": "Destination locked by user"}}.to_json]
+        )
+
+        assert_raises(Shipyrd::Client::DestinationBlocked, "pre-deploy trigger failed with 'Destination locked by user'") do
+          client.trigger("deploy")
+        end
+      end
+
       it "successfully records a deploy in shipyrd" do
         ENV["SHIPYRD_HOST"] = "localhost"
         ENV["SHIPYRD_API_KEY"] = "secret"

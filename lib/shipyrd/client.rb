@@ -16,6 +16,8 @@ class Shipyrd::Client
     SHIPYRD_HOST
   ]
 
+  class DestinationBlocked < StandardError; end
+
   def initialize(host: ENV["SHIPYRD_HOST"], api_key: ENV["SHIPYRD_API_KEY"], **options)
     @host = parse_host(host)
     @api_key = api_key
@@ -61,9 +63,19 @@ class Shipyrd::Client
 
     if response.is_a?(Net::HTTPSuccess)
       logger.info "#{event} triggered successfully for #{details[:deploy][:service_version]}"
+    elsif response.is_a?(Net::HTTPUnprocessableEntity)
+      json_response = JSON.parse(response.message)
+
+      if lock = json_response.dig("errors", "lock")
+        raise DestinationBlocked, lock
+      else
+        logger.info "#{event} trigger failed with errors => #{json_response["errors"]}"
+      end
     else
       logger.info "#{event} trigger failed with #{response.code}(#{response.message})"
     end
+  rescue DestinationBlocked => e
+    raise
   rescue => e
     logger.info "#{event} trigger failed with error => #{e}"
   end

@@ -13,6 +13,7 @@ class Shipyrd::Client
     KAMAL_SUBCOMMAND
     KAMAL_VERSION
     SHIPYRD_API_KEY
+    SHIPYRD_COMMIT_MESSAGE
     SHIPYRD_HOST
   ]
 
@@ -39,7 +40,7 @@ class Shipyrd::Client
         status: event,
         recorded_at: ENV["KAMAL_RECORDED_AT"],
         performer: performer,
-        commit_message: commit_message,
+        commit_message: ENV["SHIPYRD_COMMIT_MESSAGE"] || commit_message,
         version: ENV["KAMAL_VERSION"],
         service_version: ENV["KAMAL_SERVICE_VERSION"],
         hosts: ENV["KAMAL_HOSTS"],

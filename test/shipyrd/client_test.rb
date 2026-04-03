@@ -8,7 +8,6 @@ class TestShipyrdClient < Minitest::Test
       Shipyrd::Client::ENV_VARS.each do |var|
         ENV.delete(var)
       end
-
     end
 
     describe "configuration" do

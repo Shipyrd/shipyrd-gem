@@ -68,12 +68,33 @@ class TestShipyrdClient < Minitest::Test
         assert_equal "https://github.com/nickhammond", client.performer
       end
 
-      it "sets the commit message to the first 50 characters from git logs" do
+      it "sets the commit message to the first 90 characters from git logs" do
         client = Shipyrd::Client.new
 
         client.stubs(:`).with("git show -s --format=%s").returns("This is a commit message for some new fancy stuff that is longer than 90 characters and should get cut off")
 
         assert_equal "This is a commit message for some new fancy stuff that is longer than 90 characters and sho...", client.commit_message
+      end
+
+      it "uses SHIPYRD_COMMIT_MESSAGE when set" do
+        ENV["SHIPYRD_HOST"] = "localhost"
+        ENV["SHIPYRD_API_KEY"] = "secret"
+        ENV["SHIPYRD_COMMIT_MESSAGE"] = "Custom deploy message"
+        ENV["KAMAL_SERVICE_VERSION"] = "example@4152f8"
+
+        client = Shipyrd::Client.new
+        client.stubs(:performer).returns("nick")
+
+        stub_request(
+          :post,
+          "#{client.host}/deploys.json"
+        ).with(
+          body: hash_including("deploy" => hash_including("commit_message" => "Custom deploy message"))
+        )
+
+        Shipyrd::Logger.any_instance.stubs(:info)
+
+        client.trigger("deploy")
       end
     end
 

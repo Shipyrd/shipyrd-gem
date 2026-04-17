@@ -13,8 +13,18 @@ class Shipyrd::Client
     KAMAL_SUBCOMMAND
     KAMAL_VERSION
     SHIPYRD_API_KEY
+    SHIPYRD_COMMAND
     SHIPYRD_COMMIT_MESSAGE
+    SHIPYRD_DESTINATION
     SHIPYRD_HOST
+    SHIPYRD_HOSTS
+    SHIPYRD_PERFORMER
+    SHIPYRD_RECORDED_AT
+    SHIPYRD_ROLE
+    SHIPYRD_RUNTIME
+    SHIPYRD_SERVICE_VERSION
+    SHIPYRD_SUBCOMMAND
+    SHIPYRD_VERSION
   ]
 
   class DestinationBlocked < StandardError; end
@@ -38,17 +48,17 @@ class Shipyrd::Client
     details = {
       deploy: {
         status: event,
-        recorded_at: ENV["KAMAL_RECORDED_AT"],
+        recorded_at: env_var("RECORDED_AT"),
         performer: performer,
         commit_message: ENV["SHIPYRD_COMMIT_MESSAGE"] || commit_message,
-        version: ENV["KAMAL_VERSION"],
-        service_version: ENV["KAMAL_SERVICE_VERSION"],
-        hosts: ENV["KAMAL_HOSTS"],
-        command: ENV["KAMAL_COMMAND"],
-        subcommand: ENV["KAMAL_SUBCOMMAND"],
-        role: ENV["KAMAL_ROLE"],
-        destination: ENV["KAMAL_DESTINATION"],
-        runtime: ENV["KAMAL_RUNTIME"]
+        version: env_var("VERSION"),
+        service_version: env_var("SERVICE_VERSION"),
+        hosts: env_var("HOSTS"),
+        command: env_var("COMMAND"),
+        subcommand: env_var("SUBCOMMAND"),
+        role: env_var("ROLE"),
+        destination: env_var("DESTINATION"),
+        runtime: env_var("RUNTIME")
       }
     }
 
@@ -86,7 +96,7 @@ class Shipyrd::Client
   end
 
   def performer
-    github_username.empty? ? ENV["KAMAL_PERFORMER"] : "https://github.com/#{github_username}"
+    github_username.empty? ? env_var("PERFORMER") : "https://github.com/#{github_username}"
   end
 
   def github_username
@@ -126,5 +136,11 @@ class Shipyrd::Client
     return host if host.start_with?("https")
 
     "https://#{host}"
+  end
+
+  private
+
+  def env_var(name)
+    ENV["SHIPYRD_#{name}"] || ENV["KAMAL_#{name}"]
   end
 end

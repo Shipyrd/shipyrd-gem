@@ -76,6 +76,27 @@ class TestShipyrdClient < Minitest::Test
         assert_equal "This is a commit message for some new fancy stuff that is longer than 90 characters and sho...", client.commit_message
       end
 
+      it "reads deploy vars from SHIPYRD_ prefix when set" do
+        ENV["SHIPYRD_HOST"] = "localhost"
+        ENV["SHIPYRD_API_KEY"] = "secret"
+        ENV["SHIPYRD_SERVICE_VERSION"] = "example@4152f8"
+
+        client = Shipyrd::Client.new
+        client.stubs(:performer).returns("nick")
+        client.stubs(:commit_message).returns("This is a commit message")
+
+        stub_request(
+          :post,
+          "#{client.host}/deploys.json"
+        ).with(
+          body: hash_including("deploy" => hash_including("service_version" => "example@4152f8"))
+        )
+
+        Shipyrd::Logger.any_instance.stubs(:info)
+
+        client.trigger("deploy")
+      end
+
       it "uses SHIPYRD_COMMIT_MESSAGE when set" do
         ENV["SHIPYRD_HOST"] = "localhost"
         ENV["SHIPYRD_API_KEY"] = "secret"

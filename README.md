@@ -2,7 +2,7 @@
 
 This is a simple helper gem to connect your Kamal hooks(pre-build, pre-build, pre-deploy, post-deploy) to Shipyrd.
 
-[Shipyrd](https://shipyrd.io) is a deployment dashboard built for Kamal.
+[Shipyrd](https://shipyrd.io) is the deployment dashboard for your team.
 
 ## Installation
 
@@ -38,18 +38,18 @@ shipyrd pre-connect
 
 ## Recording a deploy
 
-This gem currently sends the following deploy details to record a deploy. The various `KAMAL_` ENV variables are set via Kamal when the [hooks are called](https://kamal-deploy.org/docs/hooks/hooks-overview/).
+This gem currently sends the following deploy details to record a deploy. Each deploy variable can be set with either a `SHIPYRD_` or `KAMAL_` prefix — `SHIPYRD_` takes precedence. The `KAMAL_` variants are set automatically by Kamal when the [hooks are called](https://kamal-deploy.org/docs/hooks/hooks-overview/).
 
-* `ENV["KAMAL_COMMAND"]`,
-* `ENV["KAMAL_DESTINATION"]`,
-* `ENV["KAMAL_HOSTS"`,
-* `ENV["KAMAL_PERFORMER"]` - `gh config get -h github.com username` is preferred if set.
-* `ENV["KAMAL_RECORDED_AT"]`,
-* `ENV["KAMAL_ROLE"]`,
-* `ENV["KAMAL_RUNTIME"]`,
-* `ENV["KAMAL_SERVICE_VERSION"]`,
-* `ENV["KAMAL_SUBCOMMAND"]`,
-* `ENV["KAMAL_VERSION"]`,
+* `ENV["SHIPYRD_COMMAND"]` / `ENV["KAMAL_COMMAND"]`,
+* `ENV["SHIPYRD_DESTINATION"]` / `ENV["KAMAL_DESTINATION"]`,
+* `ENV["SHIPYRD_HOSTS"]` / `ENV["KAMAL_HOSTS"]`,
+* `ENV["SHIPYRD_PERFORMER"]` / `ENV["KAMAL_PERFORMER"]` - `gh config get -h github.com username` is preferred if set.
+* `ENV["SHIPYRD_RECORDED_AT"]` / `ENV["KAMAL_RECORDED_AT"]`,
+* `ENV["SHIPYRD_ROLE"]` / `ENV["KAMAL_ROLE"]`,
+* `ENV["SHIPYRD_RUNTIME"]` / `ENV["KAMAL_RUNTIME"]`,
+* `ENV["SHIPYRD_SERVICE_VERSION"]` / `ENV["KAMAL_SERVICE_VERSION"]`,
+* `ENV["SHIPYRD_SUBCOMMAND"]` / `ENV["KAMAL_SUBCOMMAND"]`,
+* `ENV["SHIPYRD_VERSION"]` / `ENV["KAMAL_VERSION"]`,
 * `ENV["SHIPYRD_API_KEY"]`,
 * `ENV["SHIPYRD_HOST"]`,
 * Commit message - The first 90 characters of your commit message `git show -s --format=%s`.

@@ -2,8 +2,8 @@
 
 class Shipyrd::Configuration
   attr_writer :host, :api_key, :commit_message,
-              :recorded_at, :performer, :version, :service_version,
-              :hosts, :command, :subcommand, :role, :destination, :runtime
+    :recorded_at, :performer, :version, :service_version,
+    :hosts, :command, :subcommand, :role, :destination, :runtime
 
   def host
     @host || ENV["SHIPYRD_HOST"]

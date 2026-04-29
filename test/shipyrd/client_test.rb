@@ -123,7 +123,10 @@ class TestShipyrdClient < Minitest::Test
 
     describe "triggering" do
       it "fails gracefully from failed network request" do
-        Shipyrd.configure { |c| c.host = "localhost"; c.api_key = "secret" }
+        Shipyrd.configure { |c|
+          c.host = "localhost"
+          c.api_key = "secret"
+        }
         ENV["KAMAL_SERVICE_VERSION"] = "example@4152f8"
 
         client = Shipyrd::Client.new
@@ -141,7 +144,10 @@ class TestShipyrdClient < Minitest::Test
       end
 
       it "raises when destination is blocked" do
-        Shipyrd.configure { |c| c.host = "localhost"; c.api_key = "secret" }
+        Shipyrd.configure { |c|
+          c.host = "localhost"
+          c.api_key = "secret"
+        }
         ENV["KAMAL_SERVICE_VERSION"] = "example@4152f8"
 
         client = Shipyrd::Client.new
@@ -160,7 +166,10 @@ class TestShipyrdClient < Minitest::Test
       end
 
       it "successfully records a deploy in shipyrd" do
-        Shipyrd.configure { |c| c.host = "localhost"; c.api_key = "secret" }
+        Shipyrd.configure { |c|
+          c.host = "localhost"
+          c.api_key = "secret"
+        }
 
         ENV["KAMAL_RECORDED_AT"] = Time.now.to_s
         ENV["KAMAL_VERSION"] = "4152f876f56384f268fbdaa7a30dd2e5f5ee3894"

@@ -25,11 +25,11 @@ class Shipyrd::Client
     SHIPYRD_SERVICE_VERSION
     SHIPYRD_SUBCOMMAND
     SHIPYRD_VERSION
-  ]
+  ].freeze
 
   class DestinationBlocked < StandardError; end
 
-  def initialize(host: ENV["SHIPYRD_HOST"], api_key: ENV["SHIPYRD_API_KEY"], **options)
+  def initialize(host: Shipyrd.configuration.host, api_key: Shipyrd.configuration.api_key, **options)
     @host = parse_host(host)
     @api_key = api_key
     @logger = options[:logger] || Shipyrd::Logger.new
@@ -39,6 +39,7 @@ class Shipyrd::Client
   def trigger(event)
     return false unless valid_configuration
 
+    config = Shipyrd.configuration
     uri = URI("#{host}/deploys.json")
     headers = {
       "Content-Type": "application/json",
@@ -48,17 +49,17 @@ class Shipyrd::Client
     details = {
       deploy: {
         status: event,
-        recorded_at: env_var("RECORDED_AT"),
+        recorded_at: config.recorded_at,
         performer: performer,
-        commit_message: ENV["SHIPYRD_COMMIT_MESSAGE"] || commit_message,
-        version: env_var("VERSION"),
-        service_version: env_var("SERVICE_VERSION"),
-        hosts: env_var("HOSTS"),
-        command: env_var("COMMAND"),
-        subcommand: env_var("SUBCOMMAND"),
-        role: env_var("ROLE"),
-        destination: env_var("DESTINATION"),
-        runtime: env_var("RUNTIME")
+        commit_message: config.commit_message || commit_message,
+        version: config.version,
+        service_version: config.service_version,
+        hosts: config.hosts,
+        command: config.command,
+        subcommand: config.subcommand,
+        role: config.role,
+        destination: config.destination,
+        runtime: config.runtime
       }
     }
 
@@ -96,7 +97,7 @@ class Shipyrd::Client
   end
 
   def performer
-    github_username.empty? ? env_var("PERFORMER") : "https://github.com/#{github_username}"
+    github_username.empty? ? Shipyrd.configuration.performer : "https://github.com/#{github_username}"
   end
 
   def github_username
@@ -136,11 +137,5 @@ class Shipyrd::Client
     return host if host.start_with?("https")
 
     "https://#{host}"
-  end
-
-  private
-
-  def env_var(name)
-    ENV["SHIPYRD_#{name}"] || ENV["KAMAL_#{name}"]
   end
 end

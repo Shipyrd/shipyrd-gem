@@ -5,6 +5,7 @@ require "test_helper"
 class TestShipyrdClient < Minitest::Test
   describe "#trigger" do
     after do
+      Shipyrd.reset_configuration!
       Shipyrd::Client::ENV_VARS.each do |var|
         ENV.delete(var)
       end
@@ -12,8 +13,6 @@ class TestShipyrdClient < Minitest::Test
 
     describe "configuration" do
       it "when host isn't configured" do
-        ENV["SHIPYRD_HOST"] = nil
-
         assert_equal Shipyrd::Client.new.host, "https://hooks.shipyrd.io"
       end
 
@@ -38,18 +37,17 @@ class TestShipyrdClient < Minitest::Test
       end
 
       it "https protocol is automatically added to host" do
-        ENV["SHIPYRD_HOST"] = "localhost"
+        Shipyrd.configure { |c| c.host = "localhost" }
         assert_equal "https://localhost", Shipyrd::Client.new.host
       end
 
       it "https protocol is not added to host if it's already there" do
-        ENV["SHIPYRD_HOST"] = "https://localhost"
+        Shipyrd.configure { |c| c.host = "https://localhost" }
         assert_equal "https://localhost", Shipyrd::Client.new.host
       end
 
       it "when API key isn't configured" do
-        ENV["SHIPYRD_API_KEY"] = nil
-        ENV["SHIPYRD_HOST"] = "localhost"
+        Shipyrd.configure { |c| c.host = "localhost" }
 
         Shipyrd::Logger.any_instance.expects(:info).with("ENV['SHIPYRD_API_KEY'] is not configured, disabling")
 
@@ -57,12 +55,12 @@ class TestShipyrdClient < Minitest::Test
       end
 
       it "sets the performer" do
-        ENV["KAMAL_PERFORMER"] = "n"
+        Shipyrd.configure { |c| c.performer = "n" }
 
         client = Shipyrd::Client.new
 
         client.stubs(:`).with("gh config get -h github.com username").returns("")
-        assert_equal ENV["KAMAL_PERFORMER"], client.performer
+        assert_equal "n", client.performer
 
         client.stubs(:`).with("gh config get -h github.com username").returns("nickhammond")
         assert_equal "https://github.com/nickhammond", client.performer
@@ -77,9 +75,11 @@ class TestShipyrdClient < Minitest::Test
       end
 
       it "reads deploy vars from SHIPYRD_ prefix when set" do
-        ENV["SHIPYRD_HOST"] = "localhost"
-        ENV["SHIPYRD_API_KEY"] = "secret"
-        ENV["SHIPYRD_SERVICE_VERSION"] = "example@4152f8"
+        Shipyrd.configure do |c|
+          c.host = "localhost"
+          c.api_key = "secret"
+          c.service_version = "example@4152f8"
+        end
 
         client = Shipyrd::Client.new
         client.stubs(:performer).returns("nick")
@@ -98,10 +98,12 @@ class TestShipyrdClient < Minitest::Test
       end
 
       it "uses SHIPYRD_COMMIT_MESSAGE when set" do
-        ENV["SHIPYRD_HOST"] = "localhost"
-        ENV["SHIPYRD_API_KEY"] = "secret"
-        ENV["SHIPYRD_COMMIT_MESSAGE"] = "Custom deploy message"
-        ENV["KAMAL_SERVICE_VERSION"] = "example@4152f8"
+        Shipyrd.configure do |c|
+          c.host = "localhost"
+          c.api_key = "secret"
+          c.commit_message = "Custom deploy message"
+          c.service_version = "example@4152f8"
+        end
 
         client = Shipyrd::Client.new
         client.stubs(:performer).returns("nick")
@@ -121,8 +123,7 @@ class TestShipyrdClient < Minitest::Test
 
     describe "triggering" do
       it "fails gracefully from failed network request" do
-        ENV["SHIPYRD_HOST"] = "localhost"
-        ENV["SHIPYRD_API_KEY"] = "secret"
+        Shipyrd.configure { |c| c.host = "localhost"; c.api_key = "secret" }
         ENV["KAMAL_SERVICE_VERSION"] = "example@4152f8"
 
         client = Shipyrd::Client.new
@@ -140,8 +141,7 @@ class TestShipyrdClient < Minitest::Test
       end
 
       it "raises when destination is blocked" do
-        ENV["SHIPYRD_HOST"] = "localhost"
-        ENV["SHIPYRD_API_KEY"] = "secret"
+        Shipyrd.configure { |c| c.host = "localhost"; c.api_key = "secret" }
         ENV["KAMAL_SERVICE_VERSION"] = "example@4152f8"
 
         client = Shipyrd::Client.new
@@ -160,8 +160,8 @@ class TestShipyrdClient < Minitest::Test
       end
 
       it "successfully records a deploy in shipyrd" do
-        ENV["SHIPYRD_HOST"] = "localhost"
-        ENV["SHIPYRD_API_KEY"] = "secret"
+        Shipyrd.configure { |c| c.host = "localhost"; c.api_key = "secret" }
+
         ENV["KAMAL_RECORDED_AT"] = Time.now.to_s
         ENV["KAMAL_VERSION"] = "4152f876f56384f268fbdaa7a30dd2e5f5ee3894"
         ENV["KAMAL_SERVICE_VERSION"] = "example@4152f8"

@@ -107,7 +107,7 @@ class Shipyrd::Client
   end
 
   def commit_message
-    message = `git show -s --format=%s`.chomp
+    message = `git show -s --format=%s --no-show-signature`.chomp
 
     if message.length >= 90
       "#{message[0..90]}..."

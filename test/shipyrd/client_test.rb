@@ -69,9 +69,11 @@ class TestShipyrdClient < Minitest::Test
       it "sets the commit message to the first 90 characters from git logs" do
         client = Shipyrd::Client.new
 
-        client.stubs(:`).with("git show -s --format=%s").returns("This is a commit message for some new fancy stuff that is longer than 90 characters and should get cut off")
+        message = "This is a commit message for some new fancy stuff that is longer than 90 characters and should get cut off"
+        client.stubs(:`).with("git show -s --format=%s --no-show-signature").returns(message)
 
-        assert_equal "This is a commit message for some new fancy stuff that is longer than 90 characters and sho...", client.commit_message
+        expected = "This is a commit message for some new fancy stuff that is longer than 90 characters and sho..."
+        assert_equal expected, client.commit_message
       end
 
       it "reads deploy vars from SHIPYRD_ prefix when set" do
